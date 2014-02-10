@@ -1,0 +1,56 @@
+<html>
+<head><title>task.js examples: read</title></head>
+<script type="application/javascript" src="../lib/task.js"></script>
+<script type="application/javascript;version=1.8">
+var { Deferred } = task;
+
+// promise version of XMLHttpRequest
+function read(url, method) {
+    method = method || "GET";
+    var xhr = new XMLHttpRequest();
+    var deferred = new Deferred();
+    xhr.onreadystatechange = function() {
+        if (xhr.readyState === 4) {
+            if (xhr.status >= 400) {
+                var e = new Error(xhr.statusText);
+                e.status = xhr.status;
+                deferred.reject(e);
+            } else {
+                deferred.resolve({
+                    status: xhr.status,
+                    statusText: xhr.statusText,
+                    responseText: xhr.responseText,
+                    responseXML: xhr.responseXML
+                });
+            }
+        }
+    };
+    xhr.open(method, url, true);
+    xhr.send();
+    return deferred.promise;
+}
+
+function go() {
+    var { spawn, join } = task;
+
+    var out = document.getElementById("out");
+
+    spawn(function() {
+        out.innerHTML = "reading...\n";
+        try {
+            var [ f1, f2 ] = yield join(read("sleep.html"), read("read.html"));
+            out.innerHTML += "sleep.html: " + (f1.responseText.length) + "\n";
+            out.innerHTML += "read.html: " + (f2.responseText.length) + "\n";
+        } catch (e) {
+            e.stack.split(/\n/).forEach(function(line) { console.log(line) });
+            console.log("");
+            out.innerHTML = "error: " + e;
+        }
+    });
+}
+</script>
+<body onload="go()">
+<pre style="border: solid 1px black; width: 300px; height: 200px;" id="out">
+</pre>
+</body>
+</html>

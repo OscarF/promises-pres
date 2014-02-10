@@ -1,0 +1,28 @@
+<html>
+<head>
+	<title></title>
+	<script src="q.js"></script>
+	<script>
+		function delay(time) {
+		    var deferred = Q.defer();
+
+	        setTimeout(function () {
+	            deferred.resolve("Resolved!");
+	        }, time);
+
+		    return deferred.promise;
+		}
+
+		function run() {
+			return delay(1500)
+			    .then(alert)
+			    .then(function() {
+			    	console.log("done");
+			    });
+		}
+	</script>
+</head>
+<body>
+
+</body>
+</html>

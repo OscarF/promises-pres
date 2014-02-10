@@ -1,0 +1,29 @@
+<html>
+<head><title>task.js examples: returning a task result</title></head>
+<script type="application/javascript" src="../lib/task.js"></script>
+<script type="application/javascript;version=1.8">
+function go() {
+    var { spawn, join, TaskResult } = task;
+
+    var out = document.getElementById("out");
+
+    spawn(function() {
+        out.innerHTML = "outer task waiting...\n";
+        var x = yield spawn(function() {
+            // force this to be a generator. in ES6 we won't have to do this
+            if (false) yield;
+            out.innerHTML += "inner task working...\n";
+            out.innerHTML += "inner task finishing...\n";
+            // in ES6 we'll just be able to return 42
+            throw new TaskResult(42);
+        });
+        out.innerHTML += "outer task resuming...\n";
+        out.innerHTML += "inner task produced " + x + "\n";
+    });
+}
+</script>
+<body onload="go()">
+<pre style="border: solid 1px black; width: 300px; height: 200px;" id="out">
+</pre>
+</body>
+</html>

@@ -1,0 +1,451 @@
+<!doctype html>
+<html lang="en">
+
+    <head>
+        <meta charset="utf-8">
+
+        <title>reveal.js - The HTML Presentation Framework</title>
+
+        <meta name="description" content="A framework for easily creating beautiful presentations using HTML">
+        <meta name="author" content="Hakim El Hattab">
+
+        <meta name="apple-mobile-web-app-capable" content="yes" />
+        <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+        <link rel="stylesheet" href="css/reveal.min.css">
+        <link rel="stylesheet" href="css/theme/default.css" id="theme">
+
+        <!-- For syntax highlighting -->
+        <link rel="stylesheet" href="lib/css/zenburn.css">
+
+        <!-- If the query includes 'print-pdf', use the PDF print sheet -->
+        <script>
+            document.write( '<link rel="stylesheet" href="css/print/' + ( window.location.search.match( /print-pdf/gi ) ? 'pdf' : 'paper' ) + '.css" type="text/css" media="print">' );
+        </script>
+
+        <!--[if lt IE 9]>
+        <script src="lib/js/html5shiv.js"></script>
+        <![endif]-->
+    </head>
+
+    <body>
+
+        <div class="reveal">
+
+            <!-- Any section element inside of this container is displayed as a slide -->
+            <div class="slides">
+                <section>
+                    <h1>Promises</h1>
+                    <div>
+                        <br>
+                    </div>
+            <div>
+                <ul>
+                    <li>What they are</li>
+                    <li>What they do</li>
+                    <li>How to use them</li>
+                </ul>
+            </div>
+
+
+            </section>
+                    <section>
+                        <h2>
+                            <span style="font-size: 75.96px;">WHOAMI</span>
+                            <br>
+                        </h2>
+            <br>
+            <br>
+            <br>
+            <br>
+            <p style="font-size: 18px">
+            @oscarfranzen<br>
+            http://se.linkedin.com/in/oscarfranzen
+            </p>
+
+            </section>
+                        <section>
+            <h1>Promises</h1>
+            <p>Turn</p>
+            <pre><code>
+firstAsyncFunction(function(value1) {
+    secondAsync(value1, function(value2) {
+        console.log(value2);
+    }
+});
+            </code></pre>
+            <p>Into</p>
+            <pre><code>
+firstAsyncFunction()
+.then(function(value1) {
+    return secondAsync(value1);
+})
+.then(function(value2) {
+    console.log(value2);
+});
+</code></pre>
+
+
+
+            </section>
+                        <section>
+                            <section>
+                                <h1>Definitition</h1>
+            <p>
+                                <span style="text-align: left;">A promise represents </span>
+                                <b style="text-align: left;">the eventual value</b>
+                                <span style="text-align: left;"> returned from the single completion of an operation. A promise may be in </span>
+                                <b style="text-align: left;">one of the three states, unfulfilled, fulfilled, and failed</b>
+                                <span style="text-align: left;">. The promise may only move from </span>
+                                <b style="text-align: left;">unfulfilled to fulfilled</b>
+                                <span style="text-align: left;">, or </span>
+                                <b style="text-align: left;">unfulfilled to failed</b>
+                                <span style="text-align: left;">.</span>
+                                <br>
+                            </p>
+            <p>
+                            <br>
+                        </p>
+            <p>Source:&nbsp;http://wiki.commonjs.org/wiki/Promises/A</p>
+            </section>
+                        <section>
+            <h2>Then</h2>
+            <div>A promise is defined as an object that has a function as the value for the property 'then':<br>
+            </div>
+            <div>
+
+            <pre><code>then(fulfilledHandler, errorHandler, progressHandler)</code></pre>
+            <ul>
+            <li>
+            <span style="text-align: center;">This function should return a new promise that is fulfilled when the given fulfilledHandler or errorHandler callback is finished.</span>
+                            <br>
+            </li>
+            <li>
+                            <span style="text-align: center;">The value returned from the callback handler is the fulfillment value for the returned promise.<br>
+                            </span>
+                        </li>
+            </ul>
+            <br>&nbsp;</div>
+
+            </section>
+                        <section>
+            <h2>Example</h2>
+            <div>
+                <pre><code>
+doSomethingAsync().
+then(callback).
+then(anotherCallback, onError);
+// The final onError will catch errors in earlier callbacks
+                </code></pre>
+
+            </div>
+
+
+            </section>
+                    </section>
+                    <section>
+                        <section>
+            <h2>Step-by-Step</h2>
+            <pre><code contenteditable="">asyncOperation()
+.then(function(data) {
+    // Do something
+    // Callback of next promise will be invoked with returnValue
+    return returnValue;
+})
+.then(function(data1) {
+    // The promise returned by this call to then()
+    // will be fulfilled when
+    // the promise returned by anotherAsync() is fulfilled
+    return anotherAsync();
+})
+.then(function (data2) {
+    // Done! :)
+});</code></pre>
+            <pre class="fragment" data-fragment-index="0">
+                        <code contenteditable="">
+asyncOperation().then(handler1).then(handler2).then(handler3);</code>
+                    </pre>
+
+
+
+
+            </section>
+                    <section>
+                        <h2>Named Handlers</h2>
+            <div>Decoupled handlers</div>
+            <pre><code contenteditable="">
+asyncOperation().then(handler1).then(handler2);
+
+function handler1() {
+    // No need to know anything about the next handler
+    return anotherAsync();
+ 
+    // I.e. no need for anotherAsync(handler2)
+}
+</code></pre>
+                </section>
+                <section>
+            <h2>More Loveliness</h2>
+            <pre><code contenteditable="">
+var promise1 = asyncOp1();
+var promise2 = asyncOp2();
+var promise3 = asyncOp3();
+
+
+// Function which is fulfilled when all given promises
+// are fulfilled Ex: jQuery.when or Q.all
+
+all(promise1, promise2, promisee)
+.then(function(value1, value2, value3) {
+    // All done. Let's move on and handle the values
+});</code></pre>
+
+
+
+
+            </section>
+            </section>
+            <section>
+            <h2>Example</h2>
+            <div>
+                <pre><code>
+function delay(time) {
+    var deferred = Q.defer();
+
+    setTimeout(function () {
+        deferred.resolve("Resolved!");
+    }, time);
+
+    return deferred.promise;
+}
+
+function run() {
+    return delay(1500)
+    .then(alert)
+    .then(function() {
+        console.log("done");
+    });
+}</code></pre>
+            </div>
+
+            <pre><a href="file://localhost/Users/oscar/Dropbox/promises-pres/examles/example1.html">Example</a></pre>
+            </section>
+            <section>
+                <section>
+                    <h2>Promise As value</h2>
+            <div style="text-align: left;">Remember the spec?</div>
+            <blockquote style="text-align: left;">A promise represents <b>the eventual value</b> returned from the single completion of an operation</blockquote>
+
+
+
+
+
+
+
+
+            </section>
+                    <section>
+            <h2>Example</h2>
+            <div>
+                <pre><code contenteditable="">
+function display(promise) {
+    promise.then(function(data) {
+        document.getElementById("dataShower").innerText = data;
+    });
+}
+
+function run() {
+    var dataPromise = getData();
+    display(dataPromise);
+}
+</code></pre>
+            </div>
+            <br>
+            <div class="fragment" data-fragment-index="0">
+
+            <pre>Angular for example treats promises as values in its template engine and updates the view when the promise is resolved</pre>
+            <pre>http://docs.angularjs.org/api/ng.$q</pre>
+            </div></section></section><section><section><h2>Error handling</h2>
+            <div>
+                <br>
+            </div>
+            <blockquote>If the callback throws an error, the returned promise will be moved to failed state</blockquote>
+            <div style="text-align: right; position: absolute; width: 260px; height: 65px; z-index: 4; left: 531px; top: 304px;" class="absolute-element"><a href="http://wiki.commonjs.org/wiki/Promises/A" style="font-size: 14px;">http://wiki.commonjs.org/wiki/Promises/A</a></div>
+            <p><br></p><p><br></p><p>A failed promise is the promises&nbsp;equivalent&nbsp;to a thrown exception</p>
+
+
+
+            </section><section><h2>Example</h2>
+            <div>
+                <pre><code>
+failingAsyncOperation()
+.then(function(value) {
+    // Do if successful
+}, function(error) {
+    // Handle the error
+});
+</code></pre>
+            </div>
+
+
+            </section>
+                    <section>
+                        <h2>Error bubbling</h2>
+            <div>
+                        <br>
+            </div>
+            <pre><code>
+failingAsyncOperation()
+.then(function(value) {
+    // Do if successful
+} // No error handler. Pass errors through.
+)
+.then(function(value) {
+    // Noop
+}, function(error) {
+    // Handle the error
+});</code></pre>
+                </section>
+            </section>
+            <section>
+                <section>
+                    <h2>Task.js</h2>
+            <div>Based on ES6 generators and promises to write&nbsp;synchronously-looking Javascript</div>
+            <div>
+                <pre><code>spawn(function() {</code><code>    var data = yield getData();</code><code>    console.log("Got some data");</code><code>    display(data);</code><code>}</code>    </pre>
+            </div>
+            </section>
+                <section>
+            <h2>Example</h2>
+            <pre><code>
+var out = document.getElementById("out");
+spawn(function() {
+    out.innerHTML += "Starting\n";
+    out.innerHTML += "Sleeping 2 sec\n";
+    yield sleep(2000);
+    out.innerHTML += "We are back\n";
+
+    out.innerHTML += "Fade out\n";
+    yield $(out).fadeOut().promise();
+    yield sleep(1000);
+    out.innerHTML += "Fade back in\n";
+    yield $(out).fadeIn().promise();
+    out.innerHTML += "Visible again\n";
+
+    out.innerHTML += "All done\n";
+});
+</code></pre>
+            </section>
+            </section>
+            <section>
+                <h2>Resources</h2>
+                <div>
+                    <br>
+                </div>
+            <div style="font-size: 20px;">
+            <ul>
+                <li>
+                    Great post and inspiration for this speech:&nbsp;<br>
+                    <a href="http://www.kendoui.com/blogs/teamblog/posts/13-03-28/what-is-the-point-of-promises.aspx">http://www.kendoui.com/blogs/teamblog/posts/13-03-28/what-is-the-point-of-promises.aspx</a>
+                </li>
+                <li>
+                    Spec:&nbsp;
+                    <a href="http://wiki.commonjs.org/wiki/Promises/A">http://wiki.commonjs.org/wiki/Promises/A</a>
+                </li>
+                <li>
+                    q:&nbsp;
+                    <a href="https://github.com/kriskowal/q">https://github.com/kriskowal/q</a>
+                </li>
+                <li>
+                    Promises in Angular:&nbsp;
+                    <a href="http://docs.angularjs.org/api/ng.$q">http://docs.angularjs.org/api/ng.$q</a>
+                </li>
+            </ul>
+                <div style="text-align: left;">
+                    <br>
+                </div>
+                <div style="text-align: left;">
+                    <br>
+                </div>
+                <div style="text-align: left;">
+                    <br>
+                </div>
+                <div style="text-align: left;">
+                    <br>
+                </div>
+                <div style="text-align: left;">
+                    <br>
+                </div>
+                <div style="text-align: left;">
+                    <br>
+                </div>
+            </div>
+
+
+
+
+            </section>
+                <section>
+                    <h2>
+                        <br>
+                    </h2>
+                    <h2>
+                        <br>
+                    </h2>
+                    <h2>Questions?</h2>
+                    <div>
+                        <br>
+                    </div>
+                    <div>
+                        <br>
+                    </div>
+                    <div>
+                        <font style="font-size: 24px;">oscar.franzen@gmail.com</font>
+                    </div>
+                    <div>
+                        <font style="font-size: 24px;">@oscarfranzen</font>
+                    </div>
+                    <div>
+                        <font style="font-size: 24px;">se.linkedin.com/in/oscarfranzen</font>
+                        <br>
+                    </div>
+                </section>
+            </div>
+
+        </div>
+
+        <script src="lib/js/head.min.js"></script>
+        <script src="js/reveal.min.js"></script>
+
+        <script>
+
+            // Full list of configuration options available here:
+            // https://github.com/hakimel/reveal.js#configuration
+            Reveal.initialize({
+                controls: true,
+                progress: true,
+                history: true,
+                center: true,
+
+                theme: Reveal.getQueryHash().theme, // available themes are in /css/theme
+                transition: Reveal.getQueryHash().transition || 'default', // default/cube/page/concave/zoom/linear/fade/none
+
+                // Optional libraries used to extend on reveal.js
+                dependencies: [
+                    { src: 'lib/js/classList.js', condition: function() { return !document.body.classList; } },
+                    { src: 'plugin/markdown/marked.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+                    { src: 'plugin/markdown/markdown.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+                    { src: 'plugin/highlight/highlight.js', async: true, callback: function() { hljs.initHighlightingOnLoad(); } },
+                    { src: 'plugin/zoom-js/zoom.js', async: true, condition: function() { return !!document.body.classList; } },
+                    { src: 'plugin/notes/notes.js', async: true, condition: function() { return !!document.body.classList; } }
+                    // { src: 'plugin/search/search.js', async: true, condition: function() { return !!document.body.classList; } }
+                    // { src: 'plugin/remotes/remotes.js', async: true, condition: function() { return !!document.body.classList; } }
+                ]
+            });
+
+        </script>
+
+    </body>
+</html>

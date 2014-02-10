@@ -1,0 +1,35 @@
+<html>
+<head><title>task.js examples: sleep</title></head>
+<script type="application/javascript" src="../lib/task.js"></script>
+<script type="application/javascript" src="http://code.jquery.com/jquery-2.0.0.js"></script>
+<script type="application/javascript;version=1.8">
+function go() {
+    var { spawn, choose, sleep } = task;
+
+    var out = document.getElementById("out");
+
+    spawn(function() {
+        out.innerHTML += "Starting\n";
+        out.innerHTML += "Sleeping 2 sec\n";
+        yield sleep(2000);
+        out.innerHTML += "We are back\n";
+
+        out.innerHTML += "Fade out\n";
+        yield $(out).fadeOut().promise();
+        out.innerHTML += "Hidden\n";
+
+        yield sleep(1000);
+
+        out.innerHTML += "Fade back in\n";
+        yield $(out).fadeIn().promise();
+        out.innerHTML += "Visible again\n";
+
+        out.innerHTML += "All done\n";
+    });
+}
+</script>
+<body onload="go()">
+<pre style="border: solid 1px black; width: 300px; height: 200px;" id="out">
+</pre>
+</body>
+</html>

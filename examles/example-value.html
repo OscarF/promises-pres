@@ -1,0 +1,33 @@
+<html>
+<head>
+    <title></title>
+    <script src="q.js"></script>
+    <script>
+        function getData() {
+            var deferred = Q.defer();
+
+            setTimeout(function () {
+                deferred.resolve("I am resolved data");
+            }, 1000);
+
+            return deferred.promise;
+        }
+
+        function display(promise) {
+            promise.then(function(data) {
+                document.getElementById("dataShower").innerText = data;
+            });
+        }
+
+        function run() {
+            var dataPromise = getData();
+            display(dataPromise);
+        }
+    </script>
+</head>
+<body>
+
+<pre id="dataShower"></pre>
+
+</body>
+</html>

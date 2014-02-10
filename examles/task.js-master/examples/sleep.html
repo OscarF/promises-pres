@@ -1,0 +1,43 @@
+<html>
+<head><title>task.js examples: sleep</title></head>
+<script type="application/javascript" src="../lib/task.js"></script>
+<script type="application/javascript;version=1.8">
+function go() {
+    var { spawn, choose, sleep } = task;
+
+    var out = document.getElementById("out");
+
+    spawn(function() {
+        out.innerHTML += "sleeping for 1sec...\n";
+        yield sleep(1000);
+        out.innerHTML += "woke up!\n";
+        try {
+            out.innerHTML += "spawning slow worker\n";
+            yield choose(spawn(function() {
+                out.innerHTML += "gonna try to work in a sec\n";
+                yield sleep(1000);
+                out.innerHTML += "ready to work\n";
+            }), sleep(500).then(function() { throw new Error("timed out!") }));
+        } catch (e) {
+            out.innerHTML += "never mind; " + e.message + "\n";
+        }
+        out.innerHTML += "giving scheduler a break\n";
+        yield;
+        out.innerHTML += "and we're back.\n";
+        try {
+            yield spawn(function() {
+                out.innerHTML += "gonna try something else in a sec\n";
+                yield sleep(1000);
+                out.innerHTML += "ready to work\n";
+            }).timeout(500);
+        } catch (e) {
+            out.innerHTML += "never mind; " + e.message + "\n";
+        }
+    });
+}
+</script>
+<body onload="go()">
+<pre style="border: solid 1px black; width: 300px; height: 200px;" id="out">
+</pre>
+</body>
+</html>
